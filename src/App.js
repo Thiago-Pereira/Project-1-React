@@ -1,65 +1,33 @@
-import './App.css';
 import { Component } from 'react';
+
+import './App.css';
+import { Posts } from './components/Posts';
+
+import { loadPosts } from './utils/load-posts';
 
 class App extends Component {
   state = {
-    counter: 0,
-    posts: [
-      {
-        id: 1,
-        title: 'O titulo 1',
-        body: 'O corpo 1'
-      },
-      {
-        id: 2,
-        title: 'O titulo 2',
-        body: 'O corpo 2'
-      },
-      {
-        id: 3,
-        title: 'O titulo 3',
-        body: 'O corpo 3'
-      },
-    ]
+    posts: []
   };
 
-  timeoutUpdate = null;
-
   
-  componentDidMount() {
-    this.handleTimeout();
+  async componentDidMount() {
+    await this.loadPosts();
   }
 
-  componentDidUpdate() {
-    this.handleTimeout();
-  }
+  loadPosts = async () => {
+   const postsAndPhotos = await loadPosts();
 
-  componentWillUnmount() {
-    clearTimeout(this.timeoutUpdate);
-  }
-  
-  handleTimeout = () => {
-    const { posts, counter } = this.state;
-    posts[0].title = 'O titulo mudou';
-
-    this.timeoutUpdate = setTimeout(() => {
-      this.setState({ posts, counter: counter + 1 });
-    }, 1000);
+    this.setState({ posts: postsAndPhotos });
   }
 
   render() {
-    const { posts, counter } = this.state;
+    const { posts } = this.state;
 
     return (
-      <div className="App">
-        <h1>{counter}</h1>
-        {posts.map(post => (
-          <div key={post.id}>
-            <h1>{post.title}</h1>
-            <p>{post.body}</p>
-          </div>
-        ))}
-      </div>
+      <section className="container">
+        <Posts posts={posts} />
+      </section>
     );
   }
 }
